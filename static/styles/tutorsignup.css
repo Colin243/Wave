@@ -1,0 +1,46 @@
+/* Set font family and size */
+body {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+  }
+  
+  /* Style the container */
+  .container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Style the form inputs */
+  .form-control {
+    margin-bottom: 20px;
+    height: 40px;
+    border-radius: 0;
+    border: none;
+    border-bottom: 2px solid #ccc;
+  }
+  
+  /* Style the submit button */
+  .btn-primary {
+    background-color: #3079A6;
+    border-color: #3079A6;
+    border-radius: 0;
+  }
+  
+  .btn-primary:hover {
+    background-color: #fff;
+    color: #3079A6;
+  }
+  
+  /* Style the checkbox inputs */
+  .form-check-input {
+    margin-right: 10px;
+  }
+  
+  /* Style the checkbox labels */
+  .form-check-label {
+    margin-right: 20px;
+  }
+  

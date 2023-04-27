@@ -1,0 +1,12 @@
+/* Custom CSS for the navbar */
+.navbar-custom {
+    background-color: #3079A6;
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  
+.navbar-custom .nav-link {
+    margin-left: 10px;
+    color: white;
+  }
