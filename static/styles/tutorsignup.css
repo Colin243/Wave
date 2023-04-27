@@ -22,18 +22,6 @@ body {
     border-bottom: 2px solid #ccc;
   }
   
-  /* Style the submit button */
-  .btn-primary {
-    background-color: #3079A6;
-    border-color: #3079A6;
-    border-radius: 0;
-  }
-  
-  .btn-primary:hover {
-    background-color: #fff;
-    color: #3079A6;
-  }
-  
   /* Style the checkbox inputs */
   .form-check-input {
     margin-right: 10px;

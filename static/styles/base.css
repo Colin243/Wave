@@ -5,8 +5,19 @@
     margin-left: 0;
     margin-right: 0;
   }
-  
+
 .navbar-custom .nav-link {
     margin-left: 10px;
     color: white;
+  }
+  /* Style the submit button */
+  .btn-primary {
+    background-color: #3079A6;
+    border-color: #3079A6;
+    border-radius: 0;
+  }
+  
+  .btn-primary:hover {
+    background-color: #fff;
+    color: #3079A6;
   }
