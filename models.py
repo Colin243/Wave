@@ -17,7 +17,7 @@ class User(Base):
     username = Column("username", TEXT, nullable=False)
     name = Column("name", TEXT, nullable=False)
     password = Column("password", TEXT, nullable=False)
-    tutors = relationship("Tutor", secondary="commenttags", back_populates="users")
+    tutors = relationship("Tutor", secondary="ratingtags", back_populates="users")
 
     def __init__(self, username, name, password):
         self.name = name
@@ -30,52 +30,56 @@ class Tutor(Base):
     id = Column("id", INTEGER, primary_key=True)
     bio = Column("bio", TEXT, nullable=False)
     intro = Column("intro", TEXT, nullable=False)
-    grade = Column("grade", TEXT, nullable=False)
+    grade = Column("grade", INTEGER, nullable=False)
     phone = Column("phone", TEXT, nullable=False)
     email = Column("email", TEXT, nullable=False)
-    status = Column("status", TEXT)
     rating = Column("rating", INTEGER) 
-    user_id = Column(INTEGER, ForeignKey('users.id'))
-    users = relationship("User", secondary="commenttags", back_populates="tutors")
-    courses = relationship("Course", secondary="coursetags", back_populates="tutors")
+    user_id = Column(INTEGER, ForeignKey('users.id'), nullable=False)
+    users = relationship("User", secondary="ratingtags", back_populates="tutors")
+    subjects = relationship("Subject", secondary="subjecttags", back_populates="tutors")
 
-    def __init__(self, bio, intro, grade, phone, email):
+    def __init__(self, bio, intro, grade, phone, email, user_id):
         self.bio = bio
         self.intro = intro
         self.grade = grade
         self.phone = phone
         self.email = email
+        self.user_id = user_id
 
 
-class CommentTag(Base):
-    __tablename__ = "commenttags"
+
+class RatingTag(Base):
+    __tablename__ = "ratingtags"
     # TODO: Complete the class
     id = Column("id", INTEGER, primary_key=True)
     comment = Column("comment", TEXT, nullable=False)
+    rating = Column("rating", INTEGER, nullable=False)
     user_id = Column(INTEGER, ForeignKey('users.id'))
     tutor_id = Column(INTEGER, ForeignKey('tutors.id'))
 
-    def __init__(self, comment, user_id, tutor_id):
+    def __init__(self, comment, rating, user_id, tutor_id):
         self.comment = comment
+        self.rating = rating
         self.user_id = user_id
         self.tutor_id = tutor_id
 
-class Course(Base):
-    __tablename__ = "courses"
+class Subject(Base):
+    __tablename__ = "subjects"
     # TODO: Complete the class
     id = Column("id", INTEGER, primary_key=True)
     name = Column("name", TEXT, nullable=False)
-    honors = Column("honors", bool, nullable=False)
-    ap = Column("ap", bool, nullable=False)
-    tutors = relationship("Tutor", secondary="coursetags", back_populates="courses")
+    tutors = relationship("Tutor", secondary="subjecttags", back_populates="subjects")
+
+    def __init__(self, name):
+        self.name = name
 
 
-class CourseTag(Base):
-    __tablename__ = "coursetags"
+class SubjectTag(Base):
+    __tablename__ = "subjecttags"
     # TODO: Complete the class
     id = Column("id", INTEGER, primary_key=True)
     tutor_id = Column(INTEGER, ForeignKey('tutors.id'))
-    course_id = Column(INTEGER, ForeignKey('courses.id'))
+    course_id = Column(INTEGER, ForeignKey('subjects.id'))
 
     def __init__(self, tutor_id, course_id):
         self.tutor_id = tutor_id

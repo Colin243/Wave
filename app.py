@@ -8,13 +8,20 @@ app = Flask(__name__)
 app.secret_key = "Change Me"
 
 # TODO: Fill in methods and routes
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def login():
-    return render_template("login.html")
+    if request.method=="GET":
+        return render_template("login.html")
+    elif request.method=="POST":
+        username=request.form["username"]
+        password=request.form["password"]
+        if (db_session.query(User).where((User.username == username) & (User.password == password))):
+            return redirect(url_for("home"))
 
 @app.route("/signup")
 def signup():
     return render_template("signup.html")
+    
 
 @app.route("/home")
 def home():
