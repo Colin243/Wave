@@ -5,7 +5,7 @@ from models import *
 app = Flask(__name__)
 
 # TODO: Change the secret key
-app.secret_key = "Change Me"
+app.secret_key = "1d45e93cb584e0bb"
 
 # TODO: Fill in methods and routes
 @app.route("/", methods=["GET", "POST"])
@@ -15,25 +15,71 @@ def login():
     elif request.method=="POST":
         username=request.form["username"]
         password=request.form["password"]
-        if (db_session.query(User).where((User.username == username) & (User.password == password))):
-            return redirect(url_for("home"))
+        print(username)
+        print(password)
+        #check if the exists by checking if there is a password associated with that username
+        #checks if the username is used in the databse
+        user = db_session.query(User).where(User.username == username).first()
+        if user:
+            passcheck = user.password
+            #compares the passwords for the second check
+            if (password != passcheck):
+                flash("Incorrect Username or Password", "login error")
+                return redirect(url_for("login"))
+            else:
+                session["username"] = username
+                return redirect(url_for("home"))
+        else:
+            flash("Incorrect Username or Password", "login error")
+            return redirect(url_for("login"))
+                
 
 @app.route("/signup")
 def signup():
-    return render_template("signup.html")
+    if request.method=="GET":
+        return render_template("signup.html")
+    elif request.method=="POST":
+        username=request.form["username"]
+        password=request.form["password"]
+        passcheck=request.form["passcheck"]
+        name=request.form["name"]
+        # check if the passwrods match and if the username is already taken
+        if (passcheck != password):
+            flash("Passwords do not match", "fail passcheck")
+            return redirect(url_for("signup"))
+        elif (username in db_session.query(User.username)):
+            flash("That username is taken", "need new username")
+            return redirect(url_for("signup"))
+        else:
+            new_user = User(username, name, password)
+            db_session.add(new_user)
+            db_session.commit()
+            flash("Succesfully Signed Up", "signedup")
+            return redirect(url_for("login"))
+
+    
     
 
 @app.route("/home")
 def home():
-    return render_template("home.html")
+    if "username" in session:
+        return render_template("home.html")
+    else:
+        return redirect(url_for("login"))
 
 @app.route("/profile")
 def profile():
-    return render_template("tutorprofile.html")
+    if "username" in session:
+        return render_template("profile.html")
+    else:
+        return redirect(url_for("login"))
 
 @app.route("/tutor")
 def tutor():
-    return render_template("tutorsignup.html")
+    if "username" in session:
+        return render_template("tutorsignup.html")
+    else:
+        return redirect(url_for("login"))
 
 @app.before_first_request
 def setup():

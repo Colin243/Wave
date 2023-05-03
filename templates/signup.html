@@ -14,21 +14,28 @@
           <div class="col-md-4 offset-md-4 align-self-center">
             <div class="signup-container">
               <h1 class="text-center">Signup</h1>
-              <form class="signup-form">
-                <div class="form-group">
-                  <input type="text" class="form-control" placeholder="Username">
-                </div>
-                <div class="form-group">
-                  <input type="password" class="form-control" placeholder="Password">
-                </div>
-                <div class="form-group">
-                  <input type="password" class="form-control" placeholder="Confirm Password">
-                </div>
-                <div class="form-group">
-                  <input type="text" class="form-control" placeholder="Name">
-                </div>
-                <button type="submit" class="btn btn-primary btn-block">Signup</button>
+              <form class="signup-form" method="POST">
+                  <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Username" name="username" required>
+                  </div>
+                  <div class="form-group">
+                    <input type="password" class="form-control" placeholder="Password" name="password" required>
+                  </div>
+                  <div class="form-group">
+                    <input type="password" class="form-control" placeholder="Confirm Password" name="passcheck" required>
+                  </div>
+                  <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Name" name="name" required>
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-block">Signup</button>
               </form>
+              {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                  {% for msg in messages %}
+                    <p>{{msg}}</p>
+                  {% endfor %}
+                {% endif %}
+              {% endwith %}
               <div class="text-left mt-3">
                 <p class="mb-0">Already have an account?</p>
                 <a href="/" class="signin-link">Login</a>
