@@ -12,7 +12,7 @@
     {% endblock %}
 </head>
 <body>
-    {% block content %}
+  {% block content %}
 
   <!-- Jumbotron -->
   <div class="jumbotron jumbotron-custom">
@@ -23,6 +23,21 @@
   
   <!-- Card Deck -->
   <!-- Use Jinja to create a for loop that will create a new deck of cards for every 4 cards in a for loop -->
+  <!-- not complete make sure to fix and optimizee -->
+    {%for tutor in tutors:%}
+      <div class="card-deck">
+        {%for count in range(0,4)%}
+          <div class="card" style="width: 18rem;">
+            <img src="{{url_for('static', filename='images/profile.png')}}" class="card-img-top" alt="...">
+            <div class="card-body">
+              <h5 class="card-title">{{db_session.query(User.name).filter(User.id == tutor.user_id).first()[0]}}</h5>
+              <p class="card-text">{{tutor.intro}}</p>
+              <a href="" class="btn btn-primary">Profile</a>
+            </div>
+          </div>
+        {%endfor%}
+      </div>
+    {%endfor%} 
   {% endblock %}
 </body>
 </html>

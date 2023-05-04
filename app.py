@@ -18,7 +18,7 @@ def login():
         print(username)
         print(password)
         #check if the exists by checking if there is a password associated with that username
-        #checks if the username is used in the databse
+        #checks if the username is used in the databse and if the user exists
         user = db_session.query(User).where(User.username == username).first()
         if user:
             passcheck = user.password
@@ -33,8 +33,7 @@ def login():
             flash("Incorrect Username or Password", "login error")
             return redirect(url_for("login"))
                 
-
-@app.route("/signup")
+@app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method=="GET":
         return render_template("signup.html")
@@ -43,11 +42,16 @@ def signup():
         password=request.form["password"]
         passcheck=request.form["passcheck"]
         name=request.form["name"]
+        print(username)
+        print(password)
+        print(passcheck)
+        print(name)
         # check if the passwrods match and if the username is already taken
+        user = db_session.query(User).where(User.username == username).first()
         if (passcheck != password):
             flash("Passwords do not match", "fail passcheck")
             return redirect(url_for("signup"))
-        elif (username in db_session.query(User.username)):
+        elif (user):
             flash("That username is taken", "need new username")
             return redirect(url_for("signup"))
         else:
@@ -56,9 +60,6 @@ def signup():
             db_session.commit()
             flash("Succesfully Signed Up", "signedup")
             return redirect(url_for("login"))
-
-    
-    
 
 @app.route("/home")
 def home():
@@ -70,14 +71,17 @@ def home():
 @app.route("/profile")
 def profile():
     if "username" in session:
-        return render_template("profile.html")
+        user = db_session.query(User).filter(User.username == session["username"]).first()[0]
+        tutors = db_session.query(Tutor).all()
+        return render_template("profile.html", user=user)
     else:
         return redirect(url_for("login"))
 
 @app.route("/tutor")
 def tutor():
     if "username" in session:
-        return render_template("tutorsignup.html")
+        tutors = db_session.query(Tutor).all()
+        return render_template("tutorsignup.html", tutors=tutors)
     else:
         return redirect(url_for("login"))
 
