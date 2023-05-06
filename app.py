@@ -15,8 +15,6 @@ def login():
     elif request.method=="POST":
         username=request.form["username"]
         password=request.form["password"]
-        print(username)
-        print(password)
         #check if the exists by checking if there is a password associated with that username
         #checks if the username is used in the databse and if the user exists
         user = db_session.query(User).where(User.username == username).first()
@@ -42,10 +40,6 @@ def signup():
         password=request.form["password"]
         passcheck=request.form["passcheck"]
         name=request.form["name"]
-        print(username)
-        print(password)
-        print(passcheck)
-        print(name)
         # check if the passwrods match and if the username is already taken
         user = db_session.query(User).where(User.username == username).first()
         if (passcheck != password):
@@ -71,19 +65,58 @@ def home():
 @app.route("/profile")
 def profile():
     if "username" in session:
-        user = db_session.query(User).filter(User.username == session["username"]).first()[0]
-        tutors = db_session.query(Tutor).all()
-        return render_template("profile.html", user=user)
+        user = db_session.query(User).filter(User.username == session["username"]).first()
+        tutorcheck = db_session.query(Tutor).where(Tutor.user_id == user.id).first()
+        if(tutorcheck):
+            comments = db_session.query(RatingTag).where(RatingTag.tutor_id == tutorcheck.id).limit(3).all()
+            subjects = tutorcheck.subjects
+            return render_template("profile.html", user=user, tutorcheck=tutorcheck, comments=comments, subjects=subjects)
+        else:
+            comments = db_session.query(RatingTag).where(RatingTag.user_id == user.id).limit(3).all()
+            return render_template("profile.html", user=user, tutorcheck=tutorcheck, comments=comments)
     else:
         return redirect(url_for("login"))
 
 @app.route("/tutor")
 def tutor():
     if "username" in session:
-        tutors = db_session.query(Tutor).all()
-        return render_template("tutorsignup.html", tutors=tutors)
+        return render_template("tutorsignup.html")
     else:
         return redirect(url_for("login"))
+
+@app.route("/review", methods=["GET", "POST"])
+def review():
+    if "username" in session:
+        user_id = db_session.query(User.id).where(User.username ==session["username"]).first()
+        if (request.method == "GET"):
+            tutors = db_session.query(Tutor).all()
+            names = []
+            for tutor in tutors:
+                names.append(db_session.query(User.name).where(User.id == tutor.user_id).first()[0])
+            return render_template("comment.html", names=names)
+        elif (request.method == "POST"):
+            tutor_name=request.form["tutor_name"]
+            print(tutor_name)
+            comment=request.form["comment"]
+            tutor = db_session.query(User.id).where(User.name == tutor_name).first()[0]
+            tutor_id = db_session.query(Tutor.id).where(Tutor.user_id == tutor).first()[0]
+            new_comment = RatingTag(comment, user_id, tutor_id)
+            db_session.add(new_comment)
+            db_session.commit()
+            flash("Submitted Comment", "comment success")
+            return redirect(url_for("review"))
+    else:
+        return redirect(url_for("login"))
+
+#logout
+@app.route("/logout")
+def logout():
+    if "username" in session:
+        session.pop("username")
+        flash("Succesfully Logged Out", "logged out")
+        return redirect(url_for("login"))
+
+
 
 @app.before_first_request
 def setup():

@@ -33,7 +33,6 @@ class Tutor(Base):
     grade = Column("grade", INTEGER, nullable=False)
     phone = Column("phone", TEXT, nullable=False)
     email = Column("email", TEXT, nullable=False)
-    rating = Column("rating", INTEGER) 
     user_id = Column(INTEGER, ForeignKey('users.id'), nullable=False)
     users = relationship("User", secondary="ratingtags", back_populates="tutors")
     subjects = relationship("Subject", secondary="subjecttags", back_populates="tutors")
@@ -47,21 +46,21 @@ class Tutor(Base):
         self.user_id = user_id
 
 
-
 class RatingTag(Base):
     __tablename__ = "ratingtags"
     # TODO: Complete the class
     id = Column("id", INTEGER, primary_key=True)
     comment = Column("comment", TEXT, nullable=False)
-    rating = Column("rating", INTEGER, nullable=False)
     user_id = Column(INTEGER, ForeignKey('users.id'))
     tutor_id = Column(INTEGER, ForeignKey('tutors.id'))
 
-    def __init__(self, comment, rating, user_id, tutor_id):
+    def __init__(self, comment, user_id, tutor_id):
         self.comment = comment
-        self.rating = rating
         self.user_id = user_id
         self.tutor_id = tutor_id
+    
+    def __repr__(self):
+        return self.comment
 
 class Subject(Base):
     __tablename__ = "subjects"

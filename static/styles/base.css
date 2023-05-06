@@ -21,3 +21,7 @@
     background-color: #fff;
     color: #3079A6;
   }
+
+  .dropdown:hover .dropdown-menu {
+    display: block;
+  }
