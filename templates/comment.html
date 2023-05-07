@@ -20,9 +20,9 @@
 			<div class="form-group">
 				<label for="personSelect">Select Person:</label>
 				<select class="form-control" id="personSelect" name="tutor_name">
-					<option value="true" >Select a person...</option>
+					<option value="personSelect" >Select a person...</option>
 					{%for name in names:%}
-						<option value="true">{{name}}</option>
+						<option value={{name}}>{{name}}</option>
 					{%endfor%}
 				</select>
 			</div>

@@ -30,7 +30,7 @@ class Tutor(Base):
     id = Column("id", INTEGER, primary_key=True)
     bio = Column("bio", TEXT, nullable=False)
     intro = Column("intro", TEXT, nullable=False)
-    grade = Column("grade", INTEGER, nullable=False)
+    grade = Column("grade", TEXT, nullable=False)
     phone = Column("phone", TEXT, nullable=False)
     email = Column("email", TEXT, nullable=False)
     user_id = Column(INTEGER, ForeignKey('users.id'), nullable=False)

@@ -33,17 +33,22 @@
               {%if tutorcheck:%} 
                 <div class="form-group">
                   <h1><label for="email">Email</label></h1>
-                  <!-- contact of user email and phone number -->
+                  <!-- email -->
                   <p>{{tutorcheck.email}}</p>
                 </div>
                 <div class="form-group">
                   <h1><label for="phone">Phone Number</label></h1>
-                  <!-- contact of user email and phone number -->
+                  <!-- phone number-->
                   <p>{{tutorcheck.phone}}</p>
                 </div>
                 <div class="form-group">
+                  <h1><label for="grade">Grade</label></h1>
+                  <!-- Grade-->
+                  <p>{{tutorcheck.grade}}</p>
+                </div>
+                <div class="form-group">
                   <h1><label for="subjects">Subjects</label></h1>
-                  <!-- contact of user email and phone number -->
+                  <!-- list of subjects -->
                   {%for subject in subjects:%}
                     <p>{{subject.name}}</p>
                   {%endfor%}

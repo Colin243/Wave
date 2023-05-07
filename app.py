@@ -68,6 +68,8 @@ def profile():
         user = db_session.query(User).filter(User.username == session["username"]).first()
         tutorcheck = db_session.query(Tutor).where(Tutor.user_id == user.id).first()
         if(tutorcheck):
+            # collects all the information if the user is an tutor and displays it
+            # otherwise will display different information based for the user
             comments = db_session.query(RatingTag).where(RatingTag.tutor_id == tutorcheck.id).limit(3).all()
             subjects = tutorcheck.subjects
             return render_template("profile.html", user=user, tutorcheck=tutorcheck, comments=comments, subjects=subjects)
@@ -77,24 +79,53 @@ def profile():
     else:
         return redirect(url_for("login"))
 
-@app.route("/tutor")
+@app.route("/tutor", methods=["GET", "POST"])
 def tutor():
     if "username" in session:
-        return render_template("tutorsignup.html")
+        user_id = db_session.query(User.id).where(User.username ==session["username"]).first()[0]
+        if (request.method == "GET"):
+            # takes all of the courses that are available and makes it so that there are available as checkboxes
+            courses =[]
+            for subject in db_session.query(Subject.name).all():
+                courses.append(subject[0])
+            return render_template("tutorsignup.html", courses=courses)
+        elif (request.method == "POST"):
+            # takes all of the requested information and uses that to make a new tutor object
+            # takes the list of the classes through the checkboxes and makes subjects tags
+            # with the new tutor object in order to link the new tutor to the new subjects
+            phone=request.form["phone"]
+            email=request.form["email"]
+            grade=request.form["grade"]
+            bio=request.form["bio"]
+            intro=request.form["intro"]
+            new_tutor = Tutor(bio, intro, grade, phone, email, user_id)
+            db_session.add(new_tutor)
+            db_session.commit()
+            courses=request.form.getlist("courses")
+            print(courses)
+            for course in courses:
+                new_subject_tag = SubjectTag(new_tutor.id, db_session.query(Subject.id).where(Subject.name == course).first()[0])
+                db_session.add(new_subject_tag)
+                db_session.commit()
+            flash("Succesfully became a tutor", "tutor success")
+            return redirect(url_for("tutor"))
     else:
         return redirect(url_for("login"))
 
 @app.route("/review", methods=["GET", "POST"])
 def review():
     if "username" in session:
-        user_id = db_session.query(User.id).where(User.username ==session["username"]).first()
+        user_id = db_session.query(User.id).where(User.username ==session["username"]).first()[0]
         if (request.method == "GET"):
+            # gives the form a list of all of the tutors so that it can be selected from the drop down list
             tutors = db_session.query(Tutor).all()
             names = []
             for tutor in tutors:
                 names.append(db_session.query(User.name).where(User.id == tutor.user_id).first()[0])
             return render_template("comment.html", names=names)
         elif (request.method == "POST"):
+            # then it intakes all of the data provided and from that produces the comment that is able to be seen on the
+            #  tutors page as well as the user as long as the user isnt a tutor
             tutor_name=request.form["tutor_name"]
             print(tutor_name)
             comment=request.form["comment"]
