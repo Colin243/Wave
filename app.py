@@ -58,7 +58,11 @@ def signup():
 @app.route("/home")
 def home():
     if "username" in session:
-        return render_template("home.html")
+        tutors = db_session.query(Tutor).all()
+        names = []
+        for tutor in tutors:
+            names.append(db_session.query(User.name).where(User.id == tutor.user_id).first()[0])
+        return render_template("home.html", tutors=tutors, names=names)
     else:
         return redirect(url_for("login"))
 
@@ -70,12 +74,28 @@ def profile():
         if(tutorcheck):
             # collects all the information if the user is an tutor and displays it
             # otherwise will display different information based for the user
-            comments = db_session.query(RatingTag).where(RatingTag.tutor_id == tutorcheck.id).limit(3).all()
+            comments = db_session.query(RatingTag).where(RatingTag.tutor_id == tutorcheck.id).order_by(RatingTag.id.desc()).limit(3).all()
             subjects = tutorcheck.subjects
             return render_template("profile.html", user=user, tutorcheck=tutorcheck, comments=comments, subjects=subjects)
         else:
-            comments = db_session.query(RatingTag).where(RatingTag.user_id == user.id).limit(3).all()
+            comments = db_session.query(RatingTag).where(RatingTag.user_id == user.id).order_by(RatingTag.id.desc()).limit(3).all()
             return render_template("profile.html", user=user, tutorcheck=tutorcheck, comments=comments)
+    else:
+        return redirect(url_for("login"))
+
+@app.route("/tutorprofile", methods=["GET", "POST"])
+def tutorprofile():
+    if "username" in session:
+        if request.method == "POST":
+            # collects all the information if the user is an tutor and displays it
+            # otherwise will display different information based for the user
+            tutor_id = request.form["tutor_id"]
+            tutor = db_session.query(Tutor).where(Tutor.id == tutor_id).first()
+            tutor_user_id = db_session.query(Tutor.user_id).where(Tutor.id == tutor_id).first()[0]
+            user_tutor = db_session.query(User).where(User.id == tutor_user_id).first()
+            comments = db_session.query(RatingTag).where(RatingTag.tutor_id == tutor_id).order_by(RatingTag.id.desc()).limit(3).all()
+            subjects = tutor.subjects
+            return render_template("tutorprofile.html", user_tutor=user_tutor, tutor=tutor, comments=comments, subjects=subjects)
     else:
         return redirect(url_for("login"))
 

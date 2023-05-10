@@ -10,9 +10,13 @@ body {
   }
   
   /* Add margin to the card deck */
-  .card-deck {
+  .card-deck{
     margin-top: 40px;
-  }
+    margin-left: 35px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-gap: .5rem;
+}
   
   /* Set max width for cards in card deck */
   .card {
