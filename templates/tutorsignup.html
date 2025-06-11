@@ -47,9 +47,7 @@
           </div>
           <div class="form-group">
             <label for="classes">Classes:</label><br>
-            {%for course in courses:%}
-            <label class="checkbox-inline"><input type="checkbox" value="{{course}}" name="courses">{{course}}</label>
-            {%endfor%}
+            <textarea class="form-control" id="class" rows="3" name="ckass"required></textarea>
           </div>
           <button type="submit" class="btn btn-primary">Submit</button>
         </form>
